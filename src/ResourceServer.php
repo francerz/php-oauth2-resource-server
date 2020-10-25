@@ -4,10 +4,11 @@ namespace Francerz\OAuth2\ResourceServer;
 
 use Francerz\Http\Headers\AbstractAuthorizationHeader;
 use Francerz\Http\Tools\MessageHelper;
-use Francerz\OAuth2\AccessToken;
+use Francerz\OAuth2\ServerAccessToken;
 use Francerz\PowerData\Functions;
 use LogicException;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 
 class ResourceServer
 {
@@ -16,15 +17,15 @@ class ResourceServer
     /**
      * Undocumented function
      *
-     * @param callable $handler Signature (AbstractAuthorizationHeader $authHeader) : ?AccessToken
+     * @param callable $handler Signature (AbstractAuthorizationHeader $authHeader) : ?ServerAccessToken
      * @return void
      */
     public function setFindAccessTokenHandler(callable $handler)
     {
-        if (!Functions::testSignature($handler, [AbstractAuthorizationHeader::class], AccessToken::class)) {
+        if (!Functions::testSignature($handler, [AbstractAuthorizationHeader::class], ServerAccessToken::class)) {
             throw new LogicException(
                 'findAccessTokenHandler signature MUST be: '.
-                '(AbstractAuthorizationHeader $authHeader) : ?AccessToken'
+                '(AbstractAuthorizationHeader $authHeader) : ?ServerAccessToken'
             );
         }
         $this->findAccessTokenHandler = $handler;
@@ -38,15 +39,18 @@ class ResourceServer
         if (!is_callable($this->findAccessTokenHandler)) {
             throw new LogicException('Callable findAccessTokenHandler not found.');
         }
+
         $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
         $accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
 
+        if (is_null($accessToken)) {
+            throw new RuntimeException('Cannot access protected resource.');
+        }
+
         $intersects = array_intersect($scopes, explode(' ', $accessToken->getScope()));
-        
         if (empty($intersects)) {
             return false;
         }
-
         return true;
     }
 }
