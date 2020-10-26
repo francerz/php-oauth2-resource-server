@@ -2,14 +2,12 @@
 
 namespace Francerz\OAuth2\ResourceServer;
 
-use Francerz\Http\Headers\AbstractAuthorizationHeader;
-use Francerz\Http\Tools\MessageHelper;
+use Francerz\Http\Utils\MessageHelper;
 use Francerz\OAuth2\ServerAccessToken;
 use Francerz\PowerData\Functions;
 use LogicException;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
-use SebastianBergmann\Environment\Runtime;
 
 class ResourceServer
 {

@@ -9,7 +9,7 @@
         }
     },
     "require": {
-        "francerz/php-oauth2-core": "^0.1",
+        "francerz/oauth2-core": "^0.2.0",
         "francerz/php-power-data": "^0.1.0"
     },
     "require-dev": {
