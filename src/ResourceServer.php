@@ -9,6 +9,7 @@ use Francerz\PowerData\Functions;
 use LogicException;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
+use SebastianBergmann\Environment\Runtime;
 
 class ResourceServer
 {
@@ -41,6 +42,11 @@ class ResourceServer
         }
 
         $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
+
+        if (is_null($authHeader)) {
+            throw new RuntimeException('Missing request Authorization header.');
+        }
+
         $accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
 
         if (is_null($accessToken)) {
