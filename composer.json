@@ -1,5 +1,5 @@
 {
-    "name": "francerz/php-oauth2-resource-server",
+    "name": "francerz/oauth2-resource-server",
     "description": "PHP Library to support OAuth 2.0 Resource Server",
     "keywords": ["oauth2"],
     "license": "MIT",
