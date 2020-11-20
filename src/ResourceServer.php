@@ -2,6 +2,7 @@
 
 namespace Francerz\OAuth2\ResourceServer;
 
+use Francerz\Http\Utils\Headers\AbstractAuthorizationHeader;
 use Francerz\Http\Utils\MessageHelper;
 use Francerz\OAuth2\ServerAccessToken;
 use Francerz\PowerData\Functions;
