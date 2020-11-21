@@ -13,6 +13,7 @@ use RuntimeException;
 class ResourceServer
 {
     private $findAccessTokenHandler;
+    private $accessToken;
 
     /**
      * Undocumented function
@@ -46,16 +47,21 @@ class ResourceServer
             throw new RuntimeException('Missing request Authorization header.');
         }
 
-        $accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
+        $this->accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
 
-        if (is_null($accessToken)) {
+        if (is_null($this->accessToken)) {
             throw new RuntimeException('Cannot access protected resource.');
         }
 
-        $intersects = array_intersect($scopes, explode(' ', $accessToken->getScope()));
+        $intersects = array_intersect($scopes, explode(' ', $this->accessToken->getScope()));
         if (empty($intersects)) {
             return false;
         }
         return true;
+    }
+
+    public function getAccessToken() : ?ServerAccessToken
+    {
+        return $this->accessToken;
     }
 }
