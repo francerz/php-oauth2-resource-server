@@ -32,36 +32,32 @@ class ResourceServer
         $this->findAccessTokenHandler = $handler;
     }
 
-    public function isValidScope(RequestInterface $request, array $scopes = []): bool
+    public function isValidScope(RequestInterface $request, array $scopes = []) : bool
     {
-        if (empty($scopes)) {
-            return true;
+        $accessToken = $this->getAccessToken($request);
+        if (is_null($accessToken)) {
+            throw new RuntimeException('Not access token found.');
         }
+        return $accessToken->matchAnyScope($scopes);
+    }
+
+    public function getAccessToken(RequestInterface $request) : ?ServerAccessToken
+    {
+        if (isset($this->accessToken)) {
+            return $this->accessToken;
+        }
+
         if (!is_callable($this->findAccessTokenHandler)) {
             throw new LogicException('Callable findAccessTokenHandler not found.');
         }
 
         $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
-
         if (is_null($authHeader)) {
             throw new RuntimeException('Missing request Authorization header.');
         }
 
         $this->accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
 
-        if (is_null($this->accessToken)) {
-            throw new RuntimeException('Cannot access protected resource.');
-        }
-
-        $intersects = array_intersect($scopes, explode(' ', $this->accessToken->getScope()));
-        if (empty($intersects)) {
-            return false;
-        }
-        return true;
-    }
-
-    public function getAccessToken() : ?ServerAccessToken
-    {
         return $this->accessToken;
     }
 }
