@@ -32,6 +32,13 @@ class ResourceServer
         $this->findAccessTokenHandler = $handler;
     }
 
+    /**
+     * @deprecated 0.2.2
+     *
+     * @param RequestInterface $request
+     * @param array $scopes
+     * @return boolean
+     */
     public function isValidScope(RequestInterface $request, array $scopes = []) : bool
     {
         $accessToken = $this->getAccessToken($request);
