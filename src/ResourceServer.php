@@ -13,7 +13,9 @@ use RuntimeException;
 class ResourceServer
 {
     private $findAccessTokenHandler;
+    private $findClientAccessTokenHandler;
     private $accessToken;
+    private $clientAccessToken;
 
     /**
      * Undocumented function
@@ -30,6 +32,17 @@ class ResourceServer
             );
         }
         $this->findAccessTokenHandler = $handler;
+    }
+
+    public function setFindClientAccessTokenHandler(callable $handler)
+    {
+        if (!Functions::testSignature($handler, [AbstractAuthorizationHeader::class], ServerAccessToken::class)) {
+            throw new LogicException(
+                'findClientAccessTokenHandler signature MUST be: '.
+                '(AbstractAthorizationHeader $authHeader) : ?ServerAccessToken'
+            );
+        }
+        $this->findClientAccessTokenHandler = $handler;
     }
 
     /**
@@ -66,5 +79,25 @@ class ResourceServer
         $this->accessToken = call_user_func($this->findAccessTokenHandler, $authHeader);
 
         return $this->accessToken;
+    }
+
+    public function getClientAccessToken(RequestInterface $request) : ?ServerAccessToken
+    {
+        if (isset($this->clientAccessToken)) {
+            return $this->clientAccessToken;
+        }
+
+        if (!is_callable($this->findClientAccessTokenHandler)) {
+            throw new LogicException('Callable findAccessTokenHandler not found.');
+        }
+
+        $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
+        if (is_null($authHeader)) {
+            throw new RuntimeException('Missing request Authorization header.');
+        }
+
+        $this->clientAccessToken = call_user_func($this->findClientAccessTokenHandler, $authHeader);
+
+        return $this->clientAccessToken;
     }
 }
