@@ -3,7 +3,7 @@
 namespace Francerz\OAuth2\ResourceServer;
 
 use Francerz\Http\Utils\Headers\AbstractAuthorizationHeader;
-use Francerz\Http\Utils\MessageHelper;
+use Francerz\Http\Utils\HttpHelper;
 use Francerz\OAuth2\ServerAccessToken;
 use Francerz\PowerData\Functions;
 use LogicException;
@@ -71,7 +71,8 @@ class ResourceServer
             throw new LogicException('Callable findAccessTokenHandler not found.');
         }
 
-        $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
+        $authHeaders = HttpHelper::getAuthorizationHeaders($request);
+        $authHeader = reset($authHeaders);
         if (is_null($authHeader)) {
             throw new RuntimeException('Missing request Authorization header.');
         }
@@ -91,7 +92,8 @@ class ResourceServer
             throw new LogicException('Callable findAccessTokenHandler not found.');
         }
 
-        $authHeader = MessageHelper::getFirstAuthorizationHeader($request);
+        $authHeaders = HttpHelper::getAuthorizationHeaders($request);
+        $authHeader = reset($authHeaders);
         if (is_null($authHeader)) {
             throw new RuntimeException('Missing request Authorization header.');
         }
