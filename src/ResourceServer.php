@@ -27,7 +27,7 @@ class ResourceServer
     {
         if (!Functions::testSignature($handler, [AbstractAuthorizationHeader::class], ServerAccessToken::class)) {
             throw new LogicException(
-                'findAccessTokenHandler signature MUST be: '.
+                'findAccessTokenHandler signature MUST be: ' .
                 '(AbstractAuthorizationHeader $authHeader) : ?ServerAccessToken'
             );
         }
@@ -38,7 +38,7 @@ class ResourceServer
     {
         if (!Functions::testSignature($handler, [AbstractAuthorizationHeader::class], ServerAccessToken::class)) {
             throw new LogicException(
-                'findClientAccessTokenHandler signature MUST be: '.
+                'findClientAccessTokenHandler signature MUST be: ' .
                 '(AbstractAthorizationHeader $authHeader) : ?ServerAccessToken'
             );
         }
@@ -52,7 +52,7 @@ class ResourceServer
      * @param array $scopes
      * @return boolean
      */
-    public function isValidScope(RequestInterface $request, array $scopes = []) : bool
+    public function isValidScope(RequestInterface $request, array $scopes = []): bool
     {
         $accessToken = $this->getAccessToken($request);
         if (is_null($accessToken)) {
@@ -61,7 +61,7 @@ class ResourceServer
         return $accessToken->matchAnyScope($scopes);
     }
 
-    public function getAccessToken(RequestInterface $request) : ?ServerAccessToken
+    public function getAccessToken(RequestInterface $request): ?ServerAccessToken
     {
         if (isset($this->accessToken)) {
             return $this->accessToken;
@@ -82,7 +82,7 @@ class ResourceServer
         return $this->accessToken;
     }
 
-    public function getClientAccessToken(RequestInterface $request) : ?ServerAccessToken
+    public function getClientAccessToken(RequestInterface $request): ?ServerAccessToken
     {
         if (isset($this->clientAccessToken)) {
             return $this->clientAccessToken;
