@@ -16,7 +16,11 @@ class ResourceServer
 
     public function getAccessTokenFromRequest(RequestInterface $request): ?ServerAccessToken
     {
-        $authHeaders = $request->getHeader('Authorization');
+        $authHeaders = $request->getHeaderLine('Authorization');
+        $authHeaders = array_map(function($v) {
+            return trim($v);
+        }, explode(',', $authHeaders));
+
         if (empty($authHeaders)) {
             throw new MissingRequestAuthorizationHeaderException();
         }
