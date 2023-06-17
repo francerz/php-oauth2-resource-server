@@ -4,9 +4,9 @@ namespace Francerz\OAuth2\ResourceServer;
 
 use Francerz\OAuth2\ServerAccessToken;
 
-interface OwnerAccessTokenFinderInterface
+interface AccessTokenFinderInterface
 {
-    public function findOwnerAccessToken(
+    public function findAccessToken(
         string $tokenType,
         string $token
     ): ?ServerAccessToken;
